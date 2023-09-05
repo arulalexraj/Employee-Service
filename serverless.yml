@@ -1,0 +1,66 @@
+service: employee-${self:custom.functionName}
+frameworkVersion: "3"
+deprecationNotificationMode: error
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  versionFunctions: false
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:scan
+          Resource: "arn:aws:dynamodb:us-east-1:272503712913:table/employee"
+
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource: "arn:aws:s3:::employee-log-exporter"
+        
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+          Resource: "arn:aws:sqs:us-east-1:272503712913:EmployeeQueue"
+  environment:
+    QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/272503712913/EmployeeQueue"
+
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!src/**'
+    - '!event/**'
+    - '!package-lock.json'
+    - '!README.md'
+  individually: true
+  excludeDevDependencies: true
+
+functions: ${file(src/service-${self:custom.functionName}.yml)}
+  # create: ${file(src/service-create.yml)}
+  # sender: ${file(src/service-sender.yml)}
+  # get: ${file(src/service-get.yml)}
+  # log: ${file(src/service-logger.yml)}
+
+custom:
+  functionName: ${env:FUNCTION_NAME}
+
+resources:
+  Resources:
+    EmployeeQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: EmployeeQueue
+  Outputs:
+    arnEmployeeQueue:
+      Value:
+        Fn::GetAtt:
+          - EmployeeQueue
+          - Arn
