@@ -1,0 +1,8 @@
+create:
+  handler: src/employee/employee-create.handle_event
+  package:
+    patterns:
+      - src/employee/employee-create.js
+      - src/lib/common.js
+      - src/lib/db.helper.js
+      - 'node_modules/**'

@@ -1,0 +1,14 @@
+receive:
+  handler: src/employee/employee-receiver.handle_event
+  package:
+    patterns:
+      - src/employee/employee-receiver.js
+      - src/lib/common.js
+      - 'node_modules/**'
+  events:
+    - sqs:
+        arn:
+          Fn::GetAtt:
+            - EmployeeQueue
+            - Arn
+        batchSize: 5

@@ -1,0 +1,8 @@
+get:
+  handler: src/employee/employee-get.handle_event
+  package:
+    patterns:
+      - src/employee/employee-get.js
+      - src/lib/common.js
+      - src/lib/db.helper.js
+      - 'node_modules/**'

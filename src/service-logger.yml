@@ -1,0 +1,6 @@
+log:
+  handler: src/employee/employee-log-exporter.handle_event
+  package:
+    patterns:
+      - src/employee/employee-log-exporter.js
+      - 'node_modules/**'
